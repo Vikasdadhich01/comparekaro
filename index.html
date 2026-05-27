@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CompareKaro — Sahi price, sahi jagah</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #1D9E75;
+    --green-dark: #0F6E56;
+    --green-light: #E1F5EE;
+    --green-mid: #9FE1CB;
+    --ink: #0D1F1A;
+    --ink-mid: #2C4A3E;
+    --muted: #6B8C7E;
+    --surface: #F5FAF8;
+    --white: #FFFFFF;
+    --border: rgba(29,158,117,0.15);
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--white);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 3rem;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { font-family: var(--font-head); font-size: 22px; font-weight: 800; color: var(--ink); text-decoration: none; }
+  .logo span { color: var(--green); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { font-size: 14px; font-weight: 400; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--green); }
+  .nav-cta {
+    background: var(--green); color: var(--white);
+    border: none; padding: 10px 22px;
+    border-radius: 100px; font-family: var(--font-body);
+    font-size: 14px; font-weight: 500; cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .nav-cta:hover { background: var(--green-dark); transform: translateY(-1px); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    background: var(--ink);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 7rem 2rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-grid-bg {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(29,158,117,0.08) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(29,158,117,0.08) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .hero-glow {
+    position: absolute; width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(29,158,117,0.18) 0%, transparent 70%);
+    top: 50%; left: 50%; transform: translate(-50%, -60%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(29,158,117,0.15); border: 1px solid rgba(29,158,117,0.3);
+    color: var(--green-mid); font-size: 13px; font-weight: 500;
+    padding: 6px 16px; border-radius: 100px; margin-bottom: 2rem;
+    position: relative;
+  }
+  .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+
+  .hero h1 {
+    font-family: var(--font-head);
+    font-size: clamp(42px, 7vw, 80px);
+    font-weight: 800; line-height: 1.05;
+    color: var(--white);
+    letter-spacing: -2px;
+    max-width: 900px;
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 .accent { color: var(--green); }
+  .hero-sub {
+    font-size: 18px; font-weight: 300; color: rgba(255,255,255,0.55);
+    max-width: 520px; line-height: 1.7; margin-bottom: 3rem;
+    position: relative;
+  }
+  .hero-search {
+    display: flex; max-width: 580px; width: 100%;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 100px; padding: 6px 6px 6px 24px;
+    gap: 10px; align-items: center; position: relative;
+    transition: border-color 0.2s;
+  }
+  .hero-search:focus-within { border-color: var(--green); }
+  .hero-search input {
+    flex: 1; background: transparent; border: none; outline: none;
+    font-family: var(--font-body); font-size: 15px;
+    color: var(--white);
+  }
+  .hero-search input::placeholder { color: rgba(255,255,255,0.3); }
+  .hero-search button {
+    background: var(--green); color: var(--white);
+    border: none; padding: 12px 28px; border-radius: 100px;
+    font-family: var(--font-body); font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .hero-search button:hover { background: var(--green-dark); }
+  .platforms-row {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    justify-content: center; margin-top: 2rem;
+    position: relative;
+  }
+  .platform-tag {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.5); font-size: 12px;
+    padding: 5px 14px; border-radius: 100px;
+  }
+  .hero-stats {
+    display: flex; gap: 3rem; margin-top: 4rem; position: relative;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 2.5rem;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat .num {
+    font-family: var(--font-head); font-size: 32px; font-weight: 800;
+    color: var(--white);
+  }
+  .hero-stat .num span { color: var(--green); }
+  .hero-stat .label { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+
+  /* SECTIONS */
+  section { padding: 6rem 3rem; }
+  .section-label {
+    display: inline-block;
+    font-size: 11px; font-weight: 500; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--green);
+    background: var(--green-light);
+    padding: 5px 14px; border-radius: 100px;
+    margin-bottom: 1.2rem;
+  }
+  .section-title {
+    font-family: var(--font-head);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700; line-height: 1.15;
+    color: var(--ink); letter-spacing: -1px;
+    max-width: 600px;
+  }
+  .section-title .accent { color: var(--green); }
+  .section-sub {
+    font-size: 16px; font-weight: 300;
+    color: var(--muted); line-height: 1.7;
+    max-width: 520px; margin-top: 1rem;
+  }
+
+  /* PROBLEM */
+  #problem { background: var(--surface); }
+  .problem-layout {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: center; max-width: 1100px; margin: 0 auto;
+  }
+  .problem-cards { display: flex; flex-direction: column; gap: 1rem; }
+  .problem-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 16px; padding: 1.25rem 1.5rem;
+    display: flex; align-items: flex-start; gap: 14px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .problem-card:hover { transform: translateX(6px); box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+  .problem-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: #FFF4E6; display: flex; align-items: center;
+    justify-content: center; font-size: 20px; flex-shrink: 0;
+  }
+  .problem-card h3 { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+  .problem-card p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* SOLUTION */
+  #solution { background: var(--white); }
+  .solution-layout {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: center; max-width: 1100px; margin: 0 auto;
+  }
+  .solution-steps { display: flex; flex-direction: column; gap: 0; }
+  .solution-step {
+    display: flex; gap: 1.5rem; align-items: flex-start;
+    padding: 1.5rem 0; border-bottom: 1px solid var(--border);
+  }
+  .solution-step:last-child { border-bottom: none; }
+  .step-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--green); color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-head); font-size: 14px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .step-content h3 { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+  .step-content p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+  .solution-visual {
+    background: var(--ink); border-radius: 24px;
+    padding: 2rem; position: relative; overflow: hidden;
+  }
+  .sol-visual-title { font-family: var(--font-head); font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 1.5rem; letter-spacing: 1px; text-transform: uppercase; }
+  .compare-row {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(255,255,255,0.05); border-radius: 12px;
+    padding: 12px 16px; margin-bottom: 8px;
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+  .compare-row.best { background: rgba(29,158,117,0.15); border-color: rgba(29,158,117,0.3); }
+  .cmp-platform { font-size: 13px; color: rgba(255,255,255,0.6); }
+  .cmp-price { font-family: var(--font-head); font-size: 16px; font-weight: 700; color: var(--white); }
+  .compare-row.best .cmp-price { color: var(--green); }
+  .best-tag { font-size: 11px; background: var(--green); color: white; padding: 2px 10px; border-radius: 100px; }
+  .savings-chip {
+    margin-top: 1.5rem; background: rgba(29,158,117,0.2);
+    border: 1px solid rgba(29,158,117,0.3);
+    border-radius: 12px; padding: 12px 16px;
+    text-align: center;
+  }
+  .savings-chip .amount { font-family: var(--font-head); font-size: 28px; font-weight: 800; color: var(--green); }
+  .savings-chip .saved-label { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+  /* AUDIENCE */
+  #audience { background: var(--surface); }
+  .audience-wrap { max-width: 1100px; margin: 0 auto; }
+  .audience-header { margin-bottom: 3rem; }
+  .audience-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .audience-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 20px; padding: 2rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .audience-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+  .aud-emoji { font-size: 32px; margin-bottom: 1rem; }
+  .aud-title { font-family: var(--font-head); font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+  .aud-desc { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 1.25rem; }
+  .aud-tag { display: inline-block; font-size: 12px; background: var(--green-light); color: var(--green-dark); padding: 4px 12px; border-radius: 100px; }
+  .market-bar-wrap { max-width: 1100px; margin: 3rem auto 0; }
+  .market-title { font-size: 14px; font-weight: 500; color: var(--muted); margin-bottom: 1.25rem; }
+  .market-bars { display: flex; flex-direction: column; gap: 12px; }
+  .mbar-row { display: flex; align-items: center; gap: 12px; }
+  .mbar-label { font-size: 13px; color: var(--ink-mid); width: 140px; flex-shrink: 0; }
+  .mbar-track { flex: 1; height: 8px; background: var(--green-light); border-radius: 100px; overflow: hidden; }
+  .mbar-fill { height: 100%; background: var(--green); border-radius: 100px; transition: width 1s ease; }
+  .mbar-val { font-size: 13px; font-weight: 500; color: var(--ink); width: 60px; text-align: right; }
+
+  /* DIFFERENTIATORS */
+  #differentiators { background: var(--white); }
+  .diff-wrap { max-width: 1100px; margin: 0 auto; }
+  .diff-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+  .diff-card {
+    border: 1px solid var(--border); border-radius: 20px;
+    padding: 2rem; position: relative; overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .diff-card:hover { border-color: var(--green); transform: translateY(-3px); }
+  .diff-icon {
+    width: 48px; height: 48px; border-radius: 14px;
+    background: var(--green-light); display: flex;
+    align-items: center; justify-content: center;
+    font-size: 22px; margin-bottom: 1.25rem;
+  }
+  .diff-title { font-family: var(--font-head); font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+  .diff-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+  .competitor-table-wrap { max-width: 1100px; margin: 3rem auto 0; }
+  .comp-table { width: 100%; border-collapse: collapse; }
+  .comp-table th {
+    font-size: 13px; font-weight: 500; color: var(--muted);
+    padding: 12px 16px; text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .comp-table td { padding: 14px 16px; font-size: 14px; border-bottom: 1px solid var(--border); }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .comp-table .ck-row td { font-weight: 500; }
+  .comp-table .ck-row { background: var(--green-light); }
+  .comp-table .ck-row td:first-child { color: var(--green-dark); border-radius: 12px 0 0 12px; }
+  .comp-table .ck-row td:last-child { border-radius: 0 12px 12px 0; }
+  .check { color: var(--green); font-size: 16px; }
+  .cross { color: #E24B4A; font-size: 16px; }
+  .partial { color: #BA7517; font-size: 16px; }
+
+  /* EVIDENCE */
+  #evidence { background: var(--ink); }
+  #evidence .section-title { color: var(--white); }
+  #evidence .section-sub { color: rgba(255,255,255,0.45); }
+  #evidence .section-label { background: rgba(29,158,117,0.2); color: var(--green-mid); }
+  .evidence-wrap { max-width: 1100px; margin: 0 auto; }
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 3rem; }
+  .stat-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px; padding: 2rem; text-align: center;
+    transition: border-color 0.2s;
+  }
+  .stat-card:hover { border-color: rgba(29,158,117,0.4); }
+  .stat-num { font-family: var(--font-head); font-size: 40px; font-weight: 800; color: var(--green); }
+  .stat-desc { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 6px; line-height: 1.5; }
+  .testimonials { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
+  .testimonial {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px; padding: 1.5rem;
+  }
+  .testimonial p { font-size: 14px; color: rgba(255,255,255,0.65); line-height: 1.7; margin-bottom: 1rem; font-style: italic; }
+  .test-author { display: flex; align-items: center; gap: 10px; }
+  .test-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--green); display: flex; align-items: center;
+    justify-content: center; font-size: 13px; font-weight: 700; color: white;
+    font-family: var(--font-head);
+  }
+  .test-name { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.7); }
+  .test-city { font-size: 12px; color: rgba(255,255,255,0.35); }
+
+  /* CTA */
+  #cta { background: var(--green); text-align: center; padding: 7rem 2rem; }
+  #cta .section-label { background: rgba(255,255,255,0.2); color: white; }
+  #cta .section-title { color: var(--white); margin: 0 auto; text-align: center; }
+  #cta .section-sub { color: rgba(255,255,255,0.75); margin: 1rem auto 0; text-align: center; }
+  .cta-buttons { display: flex; gap: 1rem; justify-content: center; margin-top: 2.5rem; }
+  .cta-btn-primary {
+    background: var(--white); color: var(--green-dark);
+    border: none; padding: 16px 36px; border-radius: 100px;
+    font-family: var(--font-body); font-size: 16px; font-weight: 500;
+    cursor: pointer; transition: transform 0.15s, box-shadow 0.2s;
+  }
+  .cta-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+  .cta-btn-secondary {
+    background: transparent; color: var(--white);
+    border: 2px solid rgba(255,255,255,0.5); padding: 16px 36px;
+    border-radius: 100px; font-family: var(--font-body);
+    font-size: 16px; font-weight: 500; cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .cta-btn-secondary:hover { border-color: white; background: rgba(255,255,255,0.1); }
+  .cta-note { font-size: 13px; color: rgba(255,255,255,0.55); margin-top: 1.25rem; }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink); padding: 2rem 3rem;
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .footer-logo { font-family: var(--font-head); font-size: 18px; font-weight: 800; color: white; }
+  .footer-logo span { color: var(--green); }
+  .footer-tagline { font-size: 13px; color: rgba(255,255,255,0.3); }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { font-size: 13px; color: rgba(255,255,255,0.35); text-decoration: none; }
+  .footer-links a:hover { color: var(--green); }
+
+  /* ANIMATIONS */
+  .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="logo">Compare<span>Karo</span></a>
+  <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#solution">Solution</a></li>
+    <li><a href="#audience">Audience</a></li>
+    <li><a href="#differentiators">Why us</a></li>
+    <li><a href="#evidence">Data</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Try for free</button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-badge"><div class="badge-dot"></div> Live prices across 6+ platforms</div>
+  <h1>Stop overpaying.<br>Start <span class="accent">CompareKaro.</span></h1>
+  <p class="hero-sub">Search any product and instantly compare prices across Amazon, Flipkart, Blinkit, Zepto, Swiggy Instamart and more — in one place.</p>
+  <div class="hero-search">
+    <input type="text" placeholder="Try &quot;Maggi noodles&quot; or &quot;iPhone 15&quot;..." />
+    <button>Compare now →</button>
+  </div>
+  <div class="platforms-row">
+    <span class="platform-tag">Amazon</span>
+    <span class="platform-tag">Flipkart</span>
+    <span class="platform-tag">Blinkit</span>
+    <span class="platform-tag">Zepto</span>
+    <span class="platform-tag">Swiggy Instamart</span>
+    <span class="platform-tag">JioMart</span>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num">6<span>+</span></div><div class="label">Platforms tracked</div></div>
+    <div class="hero-stat"><div class="num">₹800<span>+</span></div><div class="label">Avg. monthly savings</div></div>
+    <div class="hero-stat"><div class="num">10<span>M+</span></div><div class="label">Products compared</div></div>
+    <div class="hero-stat"><div class="num">2<span>sec</span></div><div class="label">To find best price</div></div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="problem-layout">
+    <div class="fade-up">
+      <span class="section-label">The problem</span>
+      <h2 class="section-title">Indian shoppers are <span class="accent">losing money</span> every day</h2>
+      <p class="section-sub">With dozens of apps and platforms, price differences are real — but no one has the time to check them all manually.</p>
+    </div>
+    <div class="problem-cards fade-up">
+      <div class="problem-card">
+        <div class="problem-icon">⏱️</div>
+        <div>
+          <h3>Too many apps, too little time</h3>
+          <p>The average Indian shopper uses 4–5 e-commerce and quick delivery apps. Switching between them to compare is exhausting.</p>
+        </div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">💸</div>
+        <div>
+          <h3>Price gaps are larger than you think</h3>
+          <p>The same product can cost 20–40% more on one platform vs another. These differences add up to thousands of rupees every year.</p>
+        </div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">🤷</div>
+        <div>
+          <h3>No single source of truth</h3>
+          <p>There is no unified tool built for India that compares both e-commerce and quick delivery apps in real time.</p>
+        </div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">📦</div>
+        <div>
+          <h3>Delivery speed vs price trade-off</h3>
+          <p>Shoppers often overpay on quick delivery apps without knowing a faster or equally fast option exists at a lower price.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section id="solution">
+  <div class="solution-layout">
+    <div class="solution-visual fade-up">
+      <div class="sol-visual-title">Live price comparison — Maggi 12-pack</div>
+      <div class="compare-row"><span class="cmp-platform">Amazon</span><span class="cmp-price">₹132</span></div>
+      <div class="compare-row"><span class="cmp-platform">Flipkart</span><span class="cmp-price">₹140</span></div>
+      <div class="compare-row"><span class="cmp-platform">JioMart</span><span class="cmp-price">₹128</span></div>
+      <div class="compare-row"><span class="cmp-platform">Swiggy Instamart</span><span class="cmp-price">₹125</span></div>
+      <div class="compare-row best">
+        <span class="cmp-platform">Blinkit</span>
+        <div style="display:flex;align-items:center;gap:8px"><span class="cmp-price">₹118</span><span class="best-tag">Best price</span></div>
+      </div>
+      <div class="savings-chip">
+        <div class="amount">₹22 saved</div>
+        <div class="saved-label">vs. the most expensive option</div>
+      </div>
+    </div>
+    <div class="fade-up">
+      <span class="section-label">The solution</span>
+      <h2 class="section-title">One search. <span class="accent">All prices.</span> Best deal.</h2>
+      <p class="section-sub">CompareKaro aggregates real-time prices across platforms so you always know you're getting the best deal — in seconds.</p>
+      <div class="solution-steps">
+        <div class="solution-step">
+          <div class="step-num">1</div>
+          <div class="step-content"><h3>Search any product</h3><p>Type a product name, brand, or scan a barcode to instantly begin your comparison.</p></div>
+        </div>
+        <div class="solution-step">
+          <div class="step-num">2</div>
+          <div class="step-content"><h3>We fetch live prices</h3><p>Our engine pulls real-time data from 6+ major platforms simultaneously — no stale prices.</p></div>
+        </div>
+        <div class="solution-step">
+          <div class="step-num">3</div>
+          <div class="step-content"><h3>Compare side by side</h3><p>See all options ranked by price with platform details, delivery time, and availability.</p></div>
+        </div>
+        <div class="solution-step">
+          <div class="step-num">4</div>
+          <div class="step-content"><h3>Buy directly</h3><p>One click takes you straight to the product on your chosen platform. No middlemen.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUDIENCE -->
+<section id="audience">
+  <div class="audience-wrap">
+    <div class="audience-header fade-up">
+      <span class="section-label">Target audience</span>
+      <h2 class="section-title">Built for <span class="accent">every</span> Indian shopper</h2>
+      <p class="section-sub">From students on tight budgets to busy professionals ordering daily essentials — CompareKaro is for anyone who wants to make smarter buying decisions.</p>
+    </div>
+    <div class="audience-grid fade-up">
+      <div class="audience-card">
+        <div class="aud-emoji">🎓</div>
+        <div class="aud-title">Students & young adults</div>
+        <div class="aud-desc">Budget-conscious and digitally savvy. They shop frequently online but every rupee counts. CompareKaro helps them stretch their money further.</div>
+        <span class="aud-tag">Ages 18–25</span>
+      </div>
+      <div class="audience-card">
+        <div class="aud-emoji">👨‍💼</div>
+        <div class="aud-title">Urban working professionals</div>
+        <div class="aud-desc">Time-poor but quality-conscious. They order groceries, electronics and daily needs regularly and want confidence they're not overpaying.</div>
+        <span class="aud-tag">Ages 26–40</span>
+      </div>
+      <div class="audience-card">
+        <div class="aud-emoji">🏠</div>
+        <div class="aud-title">Household decision-makers</div>
+        <div class="aud-desc">Managing family budgets and frequent bulk purchases. Price differences at scale — groceries, FMCG, household items — matter significantly.</div>
+        <span class="aud-tag">Ages 30–50</span>
+      </div>
+    </div>
+    <div class="market-bar-wrap fade-up">
+      <div class="market-title">India's e-commerce & quick commerce market — addressable audience</div>
+      <div class="market-bars">
+        <div class="mbar-row"><span class="mbar-label">Online shoppers</span><div class="mbar-track"><div class="mbar-fill" style="width:88%"></div></div><span class="mbar-val">350M+</span></div>
+        <div class="mbar-row"><span class="mbar-label">Quick commerce users</span><div class="mbar-track"><div class="mbar-fill" style="width:45%"></div></div><span class="mbar-val">60M+</span></div>
+        <div class="mbar-row"><span class="mbar-label">Multi-platform shoppers</span><div class="mbar-track"><div class="mbar-fill" style="width:62%"></div></div><span class="mbar-val">180M+</span></div>
+        <div class="mbar-row"><span class="mbar-label">Price-sensitive buyers</span><div class="mbar-track"><div class="mbar-fill" style="width:75%"></div></div><span class="mbar-val">240M+</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIFFERENTIATORS -->
+<section id="differentiators">
+  <div class="diff-wrap">
+    <div class="fade-up">
+      <span class="section-label">Why CompareKaro</span>
+      <h2 class="section-title">Smarter than just <span class="accent">Googling it</span></h2>
+      <p class="section-sub">Unlike generic search engines or single-platform apps, CompareKaro is purpose-built for the Indian market — combining e-commerce giants with quick delivery apps.</p>
+    </div>
+    <div class="diff-grid fade-up">
+      <div class="diff-card">
+        <div class="diff-icon">⚡</div>
+        <div class="diff-title">Real-time prices</div>
+        <div class="diff-desc">Prices update live — no cached results, no stale data. What you see is what you'll pay at the time of checkout.</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">🇮🇳</div>
+        <div class="diff-title">India-first</div>
+        <div class="diff-desc">The only tool that combines traditional e-commerce (Amazon, Flipkart) AND quick delivery apps (Blinkit, Zepto, Swiggy) in one view.</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">🚀</div>
+        <div class="diff-title">Delivery time aware</div>
+        <div class="diff-desc">See not just price but also delivery speed per platform. Make decisions based on what matters most to you right now.</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">🔔</div>
+        <div class="diff-title">Price drop alerts</div>
+        <div class="diff-desc">Set a target price on any product and get notified the moment it drops — across any platform.</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">📊</div>
+        <div class="diff-title">Price history</div>
+        <div class="diff-desc">See how a product's price has moved over time. Know if a "sale" is actually a good deal or just clever marketing.</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">🎯</div>
+        <div class="diff-title">Zero clutter</div>
+        <div class="diff-desc">No ads. No sponsored results pushing you toward one platform. Just clean, unbiased comparisons that serve the shopper.</div>
+      </div>
+    </div>
+
+    <div class="competitor-table-wrap fade-up">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>CompareKaro</th>
+            <th>Google Shopping</th>
+            <th>MySmartPrice</th>
+            <th>PriceDekho</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="ck-row"><td>CompareKaro ✦</td><td><span class="check">✓</span></td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>Quick delivery apps (Blinkit, Zepto)</td><td><span class="check">✓</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td></tr>
+          <tr><td>Real-time price updates</td><td><span class="check">✓</span></td><td><span class="partial">~</span></td><td><span class="partial">~</span></td><td><span class="partial">~</span></td></tr>
+          <tr><td>Delivery time comparison</td><td><span class="check">✓</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td></tr>
+          <tr><td>Price history charts</td><td><span class="check">✓</span></td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Price drop alerts</td><td><span class="check">✓</span></td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Ad-free results</td><td><span class="check">✓</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td></tr>
+          <tr><td>Groceries & FMCG</td><td><span class="check">✓</span></td><td><span class="partial">~</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- EVIDENCE -->
+<section id="evidence">
+  <div class="evidence-wrap">
+    <div class="fade-up">
+      <span class="section-label">Evidence & data</span>
+      <h2 class="section-title">The numbers don't <span class="accent">lie</span></h2>
+      <p class="section-sub">India's e-commerce and quick commerce market is exploding — and so is the price disparity between platforms.</p>
+    </div>
+    <div class="stats-grid fade-up">
+      <div class="stat-card"><div class="stat-num">₹8.8L Cr</div><div class="stat-desc">India's e-commerce market size by 2027 (IBEF)</div></div>
+      <div class="stat-card"><div class="stat-num">40%</div><div class="stat-desc">Average price difference found on same product across platforms</div></div>
+      <div class="stat-card"><div class="stat-num">4.3</div><div class="stat-desc">Average number of apps an Indian online shopper actively uses</div></div>
+      <div class="stat-card"><div class="stat-num">₹12,000</div><div class="stat-desc">Estimated annual overspend per shopper due to price unawareness</div></div>
+    </div>
+    <div class="testimonials fade-up" style="margin-top:2rem">
+      <div class="testimonial">
+        <p>"I never realised how much I was overspending on Blinkit. CompareKaro showed me the same pack of Amul butter was ₹40 cheaper on Zepto."</p>
+        <div class="test-author"><div class="test-avatar">PK</div><div><div class="test-name">Priya K.</div><div class="test-city">Mumbai</div></div></div>
+      </div>
+      <div class="testimonial">
+        <p>"As a student living away from home, every rupee matters. I now save close to ₹600 a month just on groceries using CompareKaro."</p>
+        <div class="test-author"><div class="test-avatar">RA</div><div><div class="test-name">Rohit A.</div><div class="test-city">Bangalore</div></div></div>
+      </div>
+      <div class="testimonial">
+        <p>"I manage my family's monthly shopping. Being able to compare Amazon, Flipkart and quick delivery apps together is a game-changer."</p>
+        <div class="test-author"><div class="test-avatar">SM</div><div><div class="test-name">Sunita M.</div><div class="test-city">Delhi</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="fade-up">
+    <span class="section-label">Get started today</span>
+    <h2 class="section-title">Start saving on every<br>purchase — for free.</h2>
+    <p class="section-sub">Join thousands of smart Indian shoppers who never overpay. No sign-up required to compare.</p>
+    <div class="cta-buttons">
+      <button class="cta-btn-primary">Compare prices now →</button>
+      <button class="cta-btn-secondary">Watch how it works</button>
+    </div>
+    <div class="cta-note">Free to use · No account needed · Works on all devices</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">Compare<span>Karo</span></div>
+    <div class="footer-tagline" style="margin-top:4px">Sahi price, sahi jagah</div>
+  </div>
+  <div class="footer-links">
+    <a href="#">About</a>
+    <a href="#">How it works</a>
+    <a href="#">Privacy</a>
+    <a href="#">Contact</a>
+  </div>
+  <div style="font-size:13px;color:rgba(255,255,255,0.25)">© 2026 CompareKaro</div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
